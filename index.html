@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📐 Grade 12 Advanced Math - Operations on Vectors (7.2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        body.en-mode { font-family: 'Inter', sans-serif; }
+        .correct { background-color: #dcfce7 !important; border-color: #16a34a !important; }
+        .incorrect { background-color: #fee2e2 !important; border-color: #dc2626 !important; }
+        .formula { font-family: 'Times New Roman', serif; font-style: italic; direction: ltr; display: inline-block; }
+        .timer-warning { color: #dc2626 !important; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0.7; } }
+        @media print { .no-print { display: none !important; } }
+        .success-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.875rem; }
+        .grade-excellent { background: #dcfce7; color: #166534; }
+        .grade-good { background: #fef3c7; color: #92400e; }
+        .grade-pass { background: #dbeafe; color: #1e40af; }
+        .grade-fail { background: #fee2e2; color: #991b1b; }
+        
+        .lang-switch {
+            position: fixed; top: 16px; left: 16px; z-index: 100;
+            background: white; padding: 6px; border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); display: flex; gap: 4px;
+            border: 2px solid #4F46E5;
+        }
+        body.en-mode .lang-switch { left: auto; right: 16px; }
+        .lang-btn {
+            padding: 6px 14px; border-radius: 20px; cursor: pointer; font-weight: bold;
+            transition: all 0.3s; border: none; font-size: 0.875rem;
+            background: transparent; color: #6b7280;
+        }
+        .lang-btn.active { background: #4F46E5; color: white; box-shadow: 0 2px 6px rgba(79,70,229,0.4); }
+        .lang-btn:hover:not(.active) { background: #eef2ff; color: #4F46E5; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4 md:p-8 min-h-screen">
+
+    <div class="lang-switch no-print">
+        <button class="lang-btn active" onclick="setLanguage('ar')" id="btn-ar">عربي</button>
+        <button class="lang-btn" onclick="setLanguage('en')" id="btn-en">EN</button>
+    </div>
+
+    <div id="timer-container" class="max-w-4xl mx-auto mb-4 text-center no-print">
+        <div class="bg-white p-4 rounded-xl shadow-md inline-block border-2 border-indigo-100">
+            <span class="text-gray-600 ml-2" data-ar="⏱️ الوقت المتبقي:" data-en="⏱️ Time Remaining:">⏱️ الوقت المتبقي:</span>
+            <span id="timer" class="text-2xl font-bold text-indigo-600 font-mono">60:00</span>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto mb-6 flex flex-wrap gap-3 justify-center no-print">
+        <button onclick="toggleAnswers()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="👁️ إظهار / إخفاء الإجابات" data-en="👁️ Show / Hide Answers">👁️ إظهار / إخفاء الإجابات</button>
+        <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-5 py-2 rounded-lg font-medium transition shadow cursor-pointer" data-ar="🖨️ طباعة / PDF" data-en="🖨️ Print / PDF">🖨️ طباعة / PDF</button>
+    </div>
+
+    <header class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md mb-8 border-r-4 border-indigo-600">
+        <div class="text-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2" data-ar="📐 رياضيات الصف الثاني عشر متقدم" data-en="📐 Grade 12 Advanced Mathematics">📐 رياضيات الصف الثاني عشر متقدم</h1>
+            <h2 class="text-lg text-indigo-600 font-semibold" data-ar="الوحدة 7.2: العمليات على المتجهات" data-en="Unit 7.2: Operations on Vectors">الوحدة 7.2: العمليات على المتجهات</h2>
+            <p class="text-sm text-gray-600 mt-2" data-ar="جمع المتجهات، طرح المتجهات، الضرب القياسي، والتطبيقات" data-en="Vector Addition, Vector Subtraction, Scalar Multiplication & Applications">جمع المتجهات، طرح المتجهات، الضرب القياسي، والتطبيقات</p>
+        </div>
+        <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600">
+            <span><span data-ar="📅 التاريخ:" data-en="📅 Date:">📅 التاريخ:</span> <input type="text" class="border-b border-gray-400 bg-transparent w-28 text-center"></span>
+            <span><span data-ar="👤 الاسم:" data-en="👤 Name:">👤 الاسم:</span> <input type="text" id="studentName" class="border-b border-gray-400 bg-transparent w-32 text-center" placeholder="Enter name"></span>
+            <span><span data-ar="⏱️ المدة: 60 دقيقة" data-en="⏱️ Duration: 60 min">⏱️ المدة: 60 دقيقة</span></span>
+            <span><span data-ar="📊 المجموع: 100 درجة" data-en="📊 Total: 100 Marks">📊 المجموع: 100 درجة</span></span>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto space-y-8" id="exam-content"></main>
+
+    <div class="text-center no-print pb-8 mt-8">
+        <button onclick="gradeExam()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-lg px-10 py-4 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📝 تسليم وتصحيح الامتحان" data-en="📝 Submit & Grade Exam">📝 تسليم وتصحيح الامتحان</button>
+    </div>
+
+    <div id="results-panel" class="max-w-4xl mx-auto mt-8 bg-white p-8 rounded-2xl shadow-2xl border-t-4 border-emerald-500 hidden no-print">
+        <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center" data-ar="📊 نتائج الامتحان" data-en="📊 Exam Results">📊 نتائج الامتحان</h2>
+        <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-blue-50 p-4 rounded-xl text-center"><p data-ar="اسم الطالب" data-en="Student Name">اسم الطالب</p><p id="res-name" class="font-bold text-xl text-indigo-700">-</p></div>
+            <div class="bg-purple-50 p-4 rounded-xl text-center"><p data-ar="التاريخ" data-en="Date">التاريخ</p><p id="res-date" class="font-bold text-xl text-purple-700">-</p></div>
+            <div class="bg-emerald-50 p-4 rounded-xl text-center"><p data-ar="المجموع" data-en="Score">المجموع</p><p id="res-total" class="font-bold text-3xl text-emerald-600">0 / 100</p></div>
+        </div>
+
+        <div class="text-center mb-6">
+            <span id="success-badge" class="success-badge grade-excellent">-</span>
+            <p id="success-percent" class="text-4xl font-bold text-emerald-600 mt-2">100%</p>
+            <p class="text-sm text-gray-500" data-ar="نسبة النجاح" data-en="Success Rate">نسبة النجاح</p>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-xl mb-6">
+            <h3 class="font-bold text-lg mb-4 text-gray-800" data-ar="📈 تفصيل الأداء حسب القسم:" data-en="📈 Performance Breakdown:">📈 تفصيل الأداء حسب القسم:</h3>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="جمع المتجهات" data-en="Vector Addition">جمع المتجهات</span>
+                    <span id="sec1-score" class="font-bold text-indigo-600">0/5</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="طرح المتجهات" data-en="Vector Subtraction">طرح المتجهات</span>
+                    <span id="sec2-score" class="font-bold text-indigo-600">0/5</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="الضرب القياسي" data-en="Scalar Multiplication">الضرب القياسي</span>
+                    <span id="sec3-score" class="font-bold text-indigo-600">0/5</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="التطبيقات الفيزيائية" data-en="Physics Applications">التطبيقات الفيزيائية</span>
+                    <span id="sec4-score" class="font-bold text-indigo-600">0/5</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700" data-ar="أسئلة SAT/ACT" data-en="SAT/ACT Questions">أسئلة SAT/ACT</span>
+                    <span id="sec5-score" class="font-bold text-indigo-600">0/5</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-6">
+            <button id="sendEmailBtn" onclick="sendResultsToEmail()" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg px-8 py-3 rounded-xl font-bold shadow-xl transition transform hover:scale-105 cursor-pointer" data-ar="📧 إرسال النتائج للمعلم" data-en="📧 Send Results to Teacher">📧 إرسال النتائج للمعلم</button>
+            <p id="emailStatus" class="text-sm mt-2 text-center font-medium"></p>
+        </div>
+
+        <div class="flex gap-3 justify-center">
+            <button onclick="window.print()" class="bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold" data-ar="🖨️ طباعة النتائج" data-en="🖨️ Print Results">🖨️ طباعة النتائج</button>
+        </div>
+    </div>
+
+    <footer class="max-w-4xl mx-auto mt-10 mb-8 text-center text-gray-500 text-sm no-print">
+        <span data-ar="© الرياضيات للصف الثاني عشر متقدم | الوحدة 7.2: العمليات على المتجهات" data-en="© Grade 12 Advanced Math | Unit 7.2: Operations on Vectors">© الرياضيات للصف الثاني عشر متقدم | الوحدة 7.2: العمليات على المتجهات</span> | Mr. Mohammed Hesham
+    </footer>
+
+<script>
+const examData = {
+    sections: [
+        {
+            id: 'sec1',
+            title: { ar: '🔹 الجزء الأول: جمع المتجهات', en: '🔹 Part 1: Vector Addition' },
+            questions: [
+                {
+                    q: { ar: 'إذا كان u = 〈3, 5〉 و v = 〈-2, 4〉، فما هو u + v؟', en: 'If u = 〈3, 5〉 and v = 〈-2, 4〉, what is u + v?' },
+                    options: [
+                        { ar: '〈1, 9〉', en: '〈1, 9〉' },
+                        { ar: '〈5, 1〉', en: '〈5, 1〉' },
+                        { ar: '〈-6, 20〉', en: '〈-6, 20〉' },
+                        { ar: '〈-1, 9〉', en: '〈-1, 9〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u + v = 〈3+(-2), 5+4〉 = 〈1, 9〉', en: 'u + v = 〈3+(-2), 5+4〉 = 〈1, 9〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈4, -3〉 و v = 〈2, 7〉، فما هو u + v؟', en: 'If u = 〈4, -3〉 and v = 〈2, 7〉, what is u + v?' },
+                    options: [
+                        { ar: '〈6, 4〉', en: '〈6, 4〉' },
+                        { ar: '〈2, -10〉', en: '〈2, -10〉' },
+                        { ar: '〈8, -21〉', en: '〈8, -21〉' },
+                        { ar: '〈6, -4〉', en: '〈6, -4〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u + v = 〈4+2, -3+7〉 = 〈6, 4〉', en: 'u + v = 〈4+2, -3+7〉 = 〈6, 4〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈-5, 2〉 و v = 〈3, -8〉، فما هو u + v؟', en: 'If u = 〈-5, 2〉 and v = 〈3, -8〉, what is u + v?' },
+                    options: [
+                        { ar: '〈-2, -6〉', en: '〈-2, -6〉' },
+                        { ar: '〈-8, 10〉', en: '〈-8, 10〉' },
+                        { ar: '〈-15, -16〉', en: '〈-15, -16〉' },
+                        { ar: '〈2, -6〉', en: '〈2, -6〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u + v = 〈-5+3, 2+(-8)〉 = 〈-2, -6〉', en: 'u + v = 〈-5+3, 2+(-8)〉 = 〈-2, -6〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈7, -4〉 و v = 〈-2, 9〉، فما هو u + v؟', en: 'If u = 〈7, -4〉 and v = 〈-2, 9〉, what is u + v?' },
+                    options: [
+                        { ar: '〈5, 5〉', en: '〈5, 5〉' },
+                        { ar: '〈9, -13〉', en: '〈9, -13〉' },
+                        { ar: '〈-14, -36〉', en: '〈-14, -36〉' },
+                        { ar: '〈5, -5〉', en: '〈5, -5〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u + v = 〈7+(-2), -4+9〉 = 〈5, 5〉', en: 'u + v = 〈7+(-2), -4+9〉 = 〈5, 5〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈-8, 3〉 و v = 〈5, -7〉، فما هو u + v؟', en: 'If u = 〈-8, 3〉 and v = 〈5, -7〉, what is u + v?' },
+                    options: [
+                        { ar: '〈-3, -4〉', en: '〈-3, -4〉' },
+                        { ar: '〈-13, 10〉', en: '〈-13, 10〉' },
+                        { ar: '〈-40, -21〉', en: '〈-40, -21〉' },
+                        { ar: '〈3, -4〉', en: '〈3, -4〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u + v = 〈-8+5, 3+(-7)〉 = 〈-3, -4〉', en: 'u + v = 〈-8+5, 3+(-7)〉 = 〈-3, -4〉' }
+                }
+            ]
+        },
+        {
+            id: 'sec2',
+            title: { ar: '🔹 الجزء الثاني: طرح المتجهات', en: '🔹 Part 2: Vector Subtraction' },
+            questions: [
+                {
+                    q: { ar: 'إذا كان u = 〈5, 3〉 و v = 〈2, 7〉، فما هو u - v؟', en: 'If u = 〈5, 3〉 and v = 〈2, 7〉, what is u - v?' },
+                    options: [
+                        { ar: '〈3, -4〉', en: '〈3, -4〉' },
+                        { ar: '〈7, 10〉', en: '〈7, 10〉' },
+                        { ar: '〈10, 21〉', en: '〈10, 21〉' },
+                        { ar: '〈3, 4〉', en: '〈3, 4〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u - v = 〈5-2, 3-7〉 = 〈3, -4〉', en: 'u - v = 〈5-2, 3-7〉 = 〈3, -4〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈-4, 8〉 و v = 〈3, -5〉، فما هو u - v؟', en: 'If u = 〈-4, 8〉 and v = 〈3, -5〉, what is u - v?' },
+                    options: [
+                        { ar: '〈-7, 13〉', en: '〈-7, 13〉' },
+                        { ar: '〈-1, 3〉', en: '〈-1, 3〉' },
+                        { ar: '〈-12, -40〉', en: '〈-12, -40〉' },
+                        { ar: '〈7, 13〉', en: '〈7, 13〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u - v = 〈-4-3, 8-(-5)〉 = 〈-7, 13〉', en: 'u - v = 〈-4-3, 8-(-5)〉 = 〈-7, 13〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈7, -2〉 و v = 〈-5, 8〉، فما هو u - v؟', en: 'If u = 〈7, -2〉 and v = 〈-5, 8〉, what is u - v?' },
+                    options: [
+                        { ar: '〈12, -10〉', en: '〈12, -10〉' },
+                        { ar: '〈2, 6〉', en: '〈2, 6〉' },
+                        { ar: '〈-35, -16〉', en: '〈-35, -16〉' },
+                        { ar: '〈12, 10〉', en: '〈12, 10〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u - v = 〈7-(-5), -2-8〉 = 〈12, -10〉', en: 'u - v = 〈7-(-5), -2-8〉 = 〈12, -10〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈-6, 4〉 و v = 〈2, -9〉، فما هو u - v؟', en: 'If u = 〈-6, 4〉 and v = 〈2, -9〉, what is u - v?' },
+                    options: [
+                        { ar: '〈-8, 13〉', en: '〈-8, 13〉' },
+                        { ar: '〈-4, -5〉', en: '〈-4, -5〉' },
+                        { ar: '〈-12, -36〉', en: '〈-12, -36〉' },
+                        { ar: '〈8, 13〉', en: '〈8, 13〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u - v = 〈-6-2, 4-(-9)〉 = 〈-8, 13〉', en: 'u - v = 〈-6-2, 4-(-9)〉 = 〈-8, 13〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈8, -5〉 و v = 〈-3, 7〉، فما هو u - v؟', en: 'If u = 〈8, -5〉 and v = 〈-3, 7〉, what is u - v?' },
+                    options: [
+                        { ar: '〈11, -12〉', en: '〈11, -12〉' },
+                        { ar: '〈5, 2〉', en: '〈5, 2〉' },
+                        { ar: '〈-24, -35〉', en: '〈-24, -35〉' },
+                        { ar: '〈11, 12〉', en: '〈11, 12〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u - v = 〈8-(-3), -5-7〉 = 〈11, -12〉', en: 'u - v = 〈8-(-3), -5-7〉 = 〈11, -12〉' }
+                }
+            ]
+        },
+        {
+            id: 'sec3',
+            title: { ar: '🔹 الجزء الثالث: الضرب القياسي', en: '🔹 Part 3: Scalar Multiplication' },
+            questions: [
+                {
+                    q: { ar: 'إذا كان u = 〈3, -4〉، فما هو 2u؟', en: 'If u = 〈3, -4〉, what is 2u?' },
+                    options: [
+                        { ar: '〈6, -8〉', en: '〈6, -8〉' },
+                        { ar: '〈5, -2〉', en: '〈5, -2〉' },
+                        { ar: '〈6, 8〉', en: '〈6, 8〉' },
+                        { ar: '〈-6, 8〉', en: '〈-6, 8〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2u = 〈2(3), 2(-4)〉 = 〈6, -8〉', en: '2u = 〈2(3), 2(-4)〉 = 〈6, -8〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈-5, 7〉، فما هو -3u؟', en: 'If u = 〈-5, 7〉, what is -3u?' },
+                    options: [
+                        { ar: '〈15, -21〉', en: '〈15, -21〉' },
+                        { ar: '〈-8, 10〉', en: '〈-8, 10〉' },
+                        { ar: '〈-15, -21〉', en: '〈-15, -21〉' },
+                        { ar: '〈15, 21〉', en: '〈15, 21〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '-3u = 〈-3(-5), -3(7)〉 = 〈15, -21〉', en: '-3u = 〈-3(-5), -3(7)〉 = 〈15, -21〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈4, -6〉، فما هو 3u؟', en: 'If u = 〈4, -6〉, what is 3u?' },
+                    options: [
+                        { ar: '〈12, -18〉', en: '〈12, -18〉' },
+                        { ar: '〈7, -3〉', en: '〈7, -3〉' },
+                        { ar: '〈12, 18〉', en: '〈12, 18〉' },
+                        { ar: '〈-12, 18〉', en: '〈-12, 18〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '3u = 〈3(4), 3(-6)〉 = 〈12, -18〉', en: '3u = 〈3(4), 3(-6)〉 = 〈12, -18〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈-7, 2〉، فما هو -2u؟', en: 'If u = 〈-7, 2〉, what is -2u?' },
+                    options: [
+                        { ar: '〈14, -4〉', en: '〈14, -4〉' },
+                        { ar: '〈-9, 4〉', en: '〈-9, 4〉' },
+                        { ar: '〈-14, -4〉', en: '〈-14, -4〉' },
+                        { ar: '〈14, 4〉', en: '〈14, 4〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '-2u = 〈-2(-7), -2(2)〉 = 〈14, -4〉', en: '-2u = 〈-2(-7), -2(2)〉 = 〈14, -4〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈5, -8〉، فما هو 4u؟', en: 'If u = 〈5, -8〉, what is 4u?' },
+                    options: [
+                        { ar: '〈20, -32〉', en: '〈20, -32〉' },
+                        { ar: '〈9, -4〉', en: '〈9, -4〉' },
+                        { ar: '〈20, 32〉', en: '〈20, 32〉' },
+                        { ar: '〈-20, 32〉', en: '〈-20, 32〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '4u = 〈4(5), 4(-8)〉 = 〈20, -32〉', en: '4u = 〈4(5), 4(-8)〉 = 〈20, -32〉' }
+                }
+            ]
+        },
+        {
+            id: 'sec4',
+            title: { ar: '🔹 الجزء الرابع: التطبيقات الفيزيائية', en: '🔹 Part 4: Physics Applications' },
+            questions: [
+                {
+                    q: { ar: 'إذا كانت قوة F₁ = 〈10, 5〉 N و F₂ = 〈-5, 8〉 N، فما هي القوة المحصلة؟', en: 'If force F₁ = 〈10, 5〉 N and F₂ = 〈-5, 8〉 N, what is the resultant force?' },
+                    options: [
+                        { ar: '〈5, 13〉 N', en: '〈5, 13〉 N' },
+                        { ar: '〈15, 13〉 N', en: '〈15, 13〉 N' },
+                        { ar: '〈-50, 40〉 N', en: '〈-50, 40〉 N' },
+                        { ar: '〈5, -13〉 N', en: '〈5, -13〉 N' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'F = F₁ + F₂ = 〈10+(-5), 5+8〉 = 〈5, 13〉 N', en: 'F = F₁ + F₂ = 〈10+(-5), 5+8〉 = 〈5, 13〉 N' }
+                },
+                {
+                    q: { ar: 'إذا كانت سرعة v₁ = 〈20, -10〉 m/s و v₂ = 〈-15, 20〉 m/s، فما هي السرعة المحصلة؟', en: 'If velocity v₁ = 〈20, -10〉 m/s and v₂ = 〈-15, 20〉 m/s, what is the resultant velocity?' },
+                    options: [
+                        { ar: '〈5, 10〉 m/s', en: '〈5, 10〉 m/s' },
+                        { ar: '〈35, 10〉 m/s', en: '〈35, 10〉 m/s' },
+                        { ar: '〈-300, -200〉 m/s', en: '〈-300, -200〉 m/s' },
+                        { ar: '〈5, -10〉 m/s', en: '〈5, -10〉 m/s' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'v = v₁ + v₂ = 〈20+(-15), -10+20〉 = 〈5, 10〉 m/s', en: 'v = v₁ + v₂ = 〈20+(-15), -10+20〉 = 〈5, 10〉 m/s' }
+                },
+                {
+                    q: { ar: 'إذا كانت قوة F = 〈8, -6〉 N، فما هو مقدارها؟', en: 'If force F = 〈8, -6〉 N, what is its magnitude?' },
+                    options: [
+                        { ar: '10 N', en: '10 N' },
+                        { ar: '14 N', en: '14 N' },
+                        { ar: '2 N', en: '2 N' },
+                        { ar: '100 N', en: '100 N' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '|F| = √(8² + (-6)²) = √(64+36) = √100 = 10 N', en: '|F| = √(8² + (-6)²) = √(64+36) = √100 = 10 N' }
+                },
+                {
+                    q: { ar: 'إذا كانت سرعة v = 〈5, -12〉 m/s، فما هو مقدارها؟', en: 'If velocity v = 〈5, -12〉 m/s, what is its magnitude?' },
+                    options: [
+                        { ar: '13 m/s', en: '13 m/s' },
+                        { ar: '17 m/s', en: '17 m/s' },
+                        { ar: '7 m/s', en: '7 m/s' },
+                        { ar: '169 m/s', en: '169 m/s' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '|v| = √(5² + (-12)²) = √(25+144) = √169 = 13 m/s', en: '|v| = √(5² + (-12)²) = √(25+144) = √169 = 13 m/s' }
+                },
+                {
+                    q: { ar: 'إذا كانت قوة F = 〈-6, 8〉 N، فما هو مقدارها؟', en: 'If force F = 〈-6, 8〉 N, what is its magnitude?' },
+                    options: [
+                        { ar: '10 N', en: '10 N' },
+                        { ar: '14 N', en: '14 N' },
+                        { ar: '2 N', en: '2 N' },
+                        { ar: '100 N', en: '100 N' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '|F| = √((-6)² + 8²) = √(36+64) = √100 = 10 N', en: '|F| = √((-6)² + 8²) = √(36+64) = √100 = 10 N' }
+                }
+            ]
+        },
+        {
+            id: 'sec5',
+            title: { ar: '🔹 الجزء الخامس: أسئلة SAT/ACT', en: '🔹 Part 5: SAT/ACT Questions' },
+            questions: [
+                {
+                    q: { ar: 'إذا كان u = 〈3, 4〉 و v = 〈2, -1〉، فما هو 2u + 3v؟', en: 'If u = 〈3, 4〉 and v = 〈2, -1〉, what is 2u + 3v?' },
+                    options: [
+                        { ar: '〈12, 5〉', en: '〈12, 5〉' },
+                        { ar: '〈12, 11〉', en: '〈12, 11〉' },
+                        { ar: '〈6, 8〉 + 〈6, -3〉', en: '〈6, 8〉 + 〈6, -3〉' },
+                        { ar: '〈12, 5〉 و 〈12, 11〉', en: '〈12, 5〉 and 〈12, 11〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2u + 3v = 〈6, 8〉 + 〈6, -3〉 = 〈12, 5〉', en: '2u + 3v = 〈6, 8〉 + 〈6, -3〉 = 〈12, 5〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈-4, 7〉 و v = 〈3, -5〉، فما هو u - 2v؟', en: 'If u = 〈-4, 7〉 and v = 〈3, -5〉, what is u - 2v?' },
+                    options: [
+                        { ar: '〈-10, 17〉', en: '〈-10, 17〉' },
+                        { ar: '〈-1, 2〉', en: '〈-1, 2〉' },
+                        { ar: '〈-10, -3〉', en: '〈-10, -3〉' },
+                        { ar: '〈10, 17〉', en: '〈10, 17〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: 'u - 2v = 〈-4, 7〉 - 〈6, -10〉 = 〈-10, 17〉', en: 'u - 2v = 〈-4, 7〉 - 〈6, -10〉 = 〈-10, 17〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈5, -3〉 و v = 〈-2, 4〉، فما هو 3u - 2v؟', en: 'If u = 〈5, -3〉 and v = 〈-2, 4〉, what is 3u - 2v?' },
+                    options: [
+                        { ar: '〈19, -17〉', en: '〈19, -17〉' },
+                        { ar: '〈11, -1〉', en: '〈11, -1〉' },
+                        { ar: '〈19, 17〉', en: '〈19, 17〉' },
+                        { ar: '〈11, 1〉', en: '〈11, 1〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '3u - 2v = 〈15, -9〉 - 〈-4, 8〉 = 〈19, -17〉', en: '3u - 2v = 〈15, -9〉 - 〈-4, 8〉 = 〈19, -17〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈-7, 2〉 و v = 〈4, -6〉، فما هو 2u + 3v؟', en: 'If u = 〈-7, 2〉 and v = 〈4, -6〉, what is 2u + 3v?' },
+                    options: [
+                        { ar: '〈-2, -14〉', en: '〈-2, -14〉' },
+                        { ar: '〈-10, -4〉', en: '〈-10, -4〉' },
+                        { ar: '〈-2, 14〉', en: '〈-2, 14〉' },
+                        { ar: '〈2, -14〉', en: '〈2, -14〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '2u + 3v = 〈-14, 4〉 + 〈12, -18〉 = 〈-2, -14〉', en: '2u + 3v = 〈-14, 4〉 + 〈12, -18〉 = 〈-2, -14〉' }
+                },
+                {
+                    q: { ar: 'إذا كان u = 〈6, -8〉 و v = 〈-3, 5〉، فما هو 3u - 2v؟', en: 'If u = 〈6, -8〉 and v = 〈-3, 5〉, what is 3u - 2v?' },
+                    options: [
+                        { ar: '〈24, -34〉', en: '〈24, -34〉' },
+                        { ar: '〈12, -6〉', en: '〈12, -6〉' },
+                        { ar: '〈24, 34〉', en: '〈24, 34〉' },
+                        { ar: '〈12, 6〉', en: '〈12, 6〉' }
+                    ],
+                    correct: 0,
+                    answer: { ar: '3u - 2v = 〈18, -24〉 - 〈-6, 10〉 = 〈24, -34〉', en: '3u - 2v = 〈18, -24〉 - 〈-6, 10〉 = 〈24, -34〉' }
+                }
+            ]
+        }
+    ]
+};
+
+let currentLang = 'ar';
+let timeRemaining = 3600;
+let timerInterval;
+
+function setLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.getElementById('btn-ar').classList.toggle('active', lang === 'ar');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.body.classList.toggle('en-mode', lang === 'en');
+    document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+        el.textContent = el.getAttribute(`data-${lang}`);
+    });
+    renderExam();
+}
+
+function renderExam() {
+    const container = document.getElementById('exam-content');
+    const labels = {
+        ar: { option: ['أ', 'ب', 'ج', 'د'], answer: '✅ الإجابة:' },
+        en: { option: ['a', 'b', 'c', 'd'], answer: '✅ Answer:' }
+    };
+    const lbl = labels[currentLang];
+    const isRTL = currentLang === 'ar';
+    
+    let html = '';
+    let globalIdx = 0;
+    examData.sections.forEach((section, sIdx) => {
+        html += `<section class="bg-white p-6 rounded-xl shadow-lg">
+            <h2 class="text-xl font-bold mb-4 text-indigo-700">${section.title[currentLang]}</h2>
+            <ol class="space-y-4 text-sm">`;
+        section.questions.forEach((q, qIdx) => {
+            const qNum = globalIdx + 1;
+            const borderSide = isRTL ? 'border-r-4 pr-4' : 'border-l-4 pl-4';
+            html += `<li class="${borderSide} border-indigo-500 py-2" id="q-${qNum}">
+                <strong>${qNum}.</strong> ${q.q[currentLang]}<br>`;
+            q.options.forEach((opt, oIdx) => {
+                const radioSide = isRTL ? 'mr-4 ml-2' : 'ml-4 mr-2';
+                const optLetter = String.fromCharCode(97 + oIdx);
+                html += `<label class="cursor-pointer block mt-1 ${isRTL ? 'mr-4' : 'ml-4'}">
+                    <input type="radio" name="q${qNum}" value="${optLetter}" class="${radioSide}">
+                    ${lbl.option[oIdx]}) ${opt[currentLang]}
+                </label>`;
+            });
+            html += `<div class="answer-box text-green-700 mt-2 font-medium hidden">
+                ${lbl.answer} ${lbl.option[q.correct]}) ${q.options[q.correct][currentLang]} — ${q.answer[currentLang]}
+            </div></li>`;
+            globalIdx++;
+        });
+        html += `</ol></section>`;
+    });
+    container.innerHTML = html;
+}
+
+function startTimer() {
+    document.getElementById('timer-container').style.display = 'block';
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        if (timeRemaining <= 300) timerEl.classList.add('timer-warning');
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert(currentLang === 'ar' ? "انتهى الوقت! سيتم تسليم الامتحان تلقائياً." : "Time's up! Exam will be submitted automatically.");
+            gradeExam();
+        }
+    }, 1000);
+}
+
+function toggleAnswers() {
+    document.querySelectorAll('.answer-box').forEach(el => el.classList.toggle('hidden'));
+}
+
+function gradeExam() {
+    let correctCount = 0;
+    const correctAnswersLetters = ['a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a'];
+    let sec1 = 0, sec2 = 0, sec3 = 0, sec4 = 0, sec5 = 0;
+    
+    for (let i = 1; i <= 20; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const li = document.getElementById(`q-${i}`);
+        const isCorrect = selected && selected.value === correctAnswersLetters[i-1];
+        if (isCorrect) {
+            correctCount++;
+            li.classList.add('correct');
+            li.classList.remove('incorrect');
+            if (i <= 4) sec1++;
+            else if (i <= 8) sec2++;
+            else if (i <= 12) sec3++;
+            else if (i <= 16) sec4++;
+            else sec5++;
+        } else {
+            li.classList.add('incorrect');
+            li.classList.remove('correct');
+        }
+    }
+
+    const score = (correctCount / 20) * 100;
+    const successRate = Math.round(score);
+    document.getElementById('res-total').textContent = `${Math.round(score)} / 100`;
+    document.getElementById('res-name').textContent = document.getElementById('studentName').value || (currentLang === 'ar' ? 'طالب' : 'Student');
+    document.getElementById('res-date').textContent = new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    document.getElementById('sec1-score').textContent = `${sec1}/5`;
+    document.getElementById('sec2-score').textContent = `${sec2}/5`;
+    document.getElementById('sec3-score').textContent = `${sec3}/5`;
+    document.getElementById('sec4-score').textContent = `${sec4}/5`;
+    document.getElementById('sec5-score').textContent = `${sec5}/5`;
+    
+    const badge = document.getElementById('success-badge');
+    const percent = document.getElementById('success-percent');
+    percent.textContent = `${successRate}%`;
+    if (currentLang === 'ar') {
+        if (successRate >= 90) { badge.textContent = 'ممتاز'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'جيد جداً'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'جيد'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'يحتاج تحسين'; badge.className = 'success-badge grade-fail'; }
+    } else {
+        if (successRate >= 90) { badge.textContent = 'Excellent'; badge.className = 'success-badge grade-excellent'; }
+        else if (successRate >= 75) { badge.textContent = 'Very Good'; badge.className = 'success-badge grade-good'; }
+        else if (successRate >= 50) { badge.textContent = 'Good'; badge.className = 'success-badge grade-pass'; }
+        else { badge.textContent = 'Needs Improvement'; badge.className = 'success-badge grade-fail'; }
+    }
+    document.getElementById('results-panel').classList.remove('hidden');
+    document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth' });
+    document.getElementById('sendEmailBtn').classList.remove('hidden');
+}
+
+function sendResultsToEmail() {
+    const btn = document.getElementById('sendEmailBtn');
+    const status = document.getElementById('emailStatus');
+    btn.disabled = true;
+    btn.textContent = currentLang === 'ar' ? '⏳ جاري الإرسال...' : '⏳ Sending...';
+    const name = document.getElementById('studentName').value || 'N/A';
+    const date = document.querySelector('input[type="text"]').value || new Date().toLocaleDateString(currentLang === 'ar' ? 'ar-AE' : 'en-US');
+    const score = document.getElementById('res-total').textContent;
+    const successRate = document.getElementById('success-percent').textContent;
+    const sec1 = document.getElementById('sec1-score').textContent;
+    const sec2 = document.getElementById('sec2-score').textContent;
+    const sec3 = document.getElementById('sec3-score').textContent;
+    const sec4 = document.getElementById('sec4-score').textContent;
+    const sec5 = document.getElementById('sec5-score').textContent;
+    
+    const dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    const font = currentLang === 'ar' ? 'Cairo' : 'Inter';
+    const sectionNames = {
+        ar: ['جمع المتجهات', 'طرح المتجهات', 'الضرب القياسي', 'التطبيقات الفيزيائية', 'أسئلة SAT/ACT'],
+        en: ['Vector Addition', 'Vector Subtraction', 'Scalar Multiplication', 'Physics Applications', 'SAT/ACT Questions']
+    };
+    const sn = sectionNames[currentLang];
+    
+    let answersHTML = `<div dir="${dir}" style="font-family: '${font}', sans-serif;">
+        <h3 style="color:#4F46E5;">📊 ${currentLang === 'ar' ? 'تفصيل الأداء - امتحان العمليات على المتجهات (7.2)' : 'Performance Details - Operations on Vectors Exam (7.2)'}:</h3>
+        <p><strong>${currentLang === 'ar' ? 'الطالب' : 'Student'}:</strong> ${name}</p>
+        <ul>
+            <li>${sn[0]}: ${sec1}</li>
+            <li>${sn[1]}: ${sec2}</li>
+            <li>${sn[2]}: ${sec3}</li>
+            <li>${sn[3]}: ${sec4}</li>
+            <li>${sn[4]}: ${sec5}</li>
+        </ul>
+        <table style="border:1px solid #e5e7eb; border-collapse:collapse; width:100%; font-size:14px; direction: ${dir};">
+        <tr style="background:#4F46E5; color:white;"><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'السؤال' : 'Q#'}</th><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'الإجابة المختارة' : 'Selected'}</th><th style="border:1px solid #e5e7eb; padding:8px;">${currentLang === 'ar' ? 'الحالة' : 'Status'}</th></tr>`;
+    
+    const correctAnswersLetters = ['a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a','a'];
+    for (let i = 1; i <= 20; i++) {
+        const sel = document.querySelector(`input[name="q${i}"]:checked`);
+        const isCorrect = sel && sel.value === correctAnswersLetters[i-1];
+        answersHTML += `<tr><td style="border:1px solid #e5e7eb; padding:6px;">${i}</td><td style="border:1px solid #e5e7eb; padding:6px;">${sel ? sel.value.toUpperCase() : '-'}</td><td style="border:1px solid #e5e7eb; padding:6px; color:${isCorrect ? 'green' : 'red'}">${isCorrect ? '✅ ' + (currentLang === 'ar' ? 'صحيح' : 'Correct') : '❌ ' + (currentLang === 'ar' ? 'خطأ' : 'Wrong')}</td></tr>`;
+    }
+    answersHTML += '</table></div>';
+
+    const PUBLIC_KEY = "Rb3Lq8tXaFmc5YHUH";
+    const SERVICE_ID = "service_w15m64i";
+    const TEMPLATE_ID = "template_5b0u2tq";
+    const TARGET_EMAIL = "mohammedhesham872@gmail.com";
+    emailjs.init(PUBLIC_KEY);
+    const templateParams = {
+        to_email: TARGET_EMAIL,
+        student_name: name,
+        exam_date: date,
+        total_score: score,
+        success_rate: successRate,
+        answers_table: answersHTML
+    };
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
+        .then(() => {
+            status.textContent = currentLang === 'ar' ? '✅ تم الإرسال بنجاح! تحقق من Gmail.' : '✅ Sent successfully! Check Gmail.';
+            status.style.color = '#059669';
+            btn.textContent = currentLang === 'ar' ? '✓ تم الإرسال' : '✓ Sent';
+        })
+        .catch(err => {
+            status.textContent = currentLang === 'ar' ? '❌ فشل الإرسال. تحقق من الإعدادات.' : '❌ Failed to send. Check settings.';
+            status.style.color = '#dc2626';
+            btn.disabled = false;
+            btn.textContent = currentLang === 'ar' ? '📧 إعادة المحاولة' : '📧 Retry';
+            console.error('EmailJS Error:', err);
+        });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    renderExam();
+    startTimer();
+});
+</script>
+</body>
+</html>
